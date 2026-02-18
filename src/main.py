@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 
 import config
@@ -45,7 +46,13 @@ def run():
         model=config.ANTHROPIC_MODEL,
     )
 
-    date_str = datetime.now().strftime("%d de %B de %Y")
+    MESES_PT = {
+        1: "Janeiro", 2: "Fevereiro", 3: "Março", 4: "Abril",
+        5: "Maio", 6: "Junho", 7: "Julho", 8: "Agosto",
+        9: "Setembro", 10: "Outubro", 11: "Novembro", 12: "Dezembro",
+    }
+    now = datetime.now()
+    date_str = f"{now.day} de {MESES_PT[now.month]} de {now.year}"
     subject = f"Seu Resumo Tech/IA — {date_str}"
 
     html = build_email_html(

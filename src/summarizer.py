@@ -8,19 +8,15 @@ Dado uma lista de notícias (que podem estar em inglês), gere:
 1. Um resumo geral do dia em português do Brasil (3-5 frases)
 2. Para cada notícia, um título traduzido para português e um resumo de 1-2 frases em português
 
-Responda APENAS com JSON válido neste formato exato:
-{
-  "resumo_do_dia": "texto do resumo geral aqui",
-  "noticias": [
-    {
-      "titulo_pt": "Título traduzido para português",
-      "resumo_pt": "Resumo curto de 1-2 frases em português",
-      "indice": 0
-    }
-  ]
-}
+IMPORTANTE:
+- Responda SOMENTE com JSON puro. Sem ```json, sem markdown, sem texto antes ou depois.
+- Não inclua metadados como "Points:", "Comments:", "Article URL:" nos resumos.
+- Foque no CONTEÚDO da notícia, não em dados do agregador.
 
-O campo "indice" deve corresponder à posição da notícia na lista original (começando em 0).
+Formato exato:
+{"resumo_do_dia": "texto aqui", "noticias": [{"titulo_pt": "Título em PT", "resumo_pt": "Resumo em PT", "indice": 0}]}
+
+O campo "indice" corresponde à posição da notícia na lista (começando em 0).
 Seja conciso, informativo e objetivo."""
 
 USER_PROMPT_TEMPLATE = """Resuma e traduza estas notícias de hoje:
@@ -56,12 +52,20 @@ def summarize_articles(
         ],
     )
 
+    raw_text = response.content[0].text.strip()
+    # Strip markdown code fences if Claude wraps the JSON
+    if raw_text.startswith("```"):
+        raw_text = raw_text.split("\n", 1)[-1]  # remove first line (```json)
+    if raw_text.endswith("```"):
+        raw_text = raw_text.rsplit("```", 1)[0]  # remove trailing ```
+    raw_text = raw_text.strip()
+
     try:
-        data = json.loads(response.content[0].text)
+        data = json.loads(raw_text)
     except (json.JSONDecodeError, IndexError):
         # Fallback: use original data if JSON parsing fails
         return {
-            "resumo_do_dia": response.content[0].text,
+            "resumo_do_dia": raw_text,
             "articles": articles,
         }
 
