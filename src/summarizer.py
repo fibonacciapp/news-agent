@@ -29,7 +29,7 @@ def summarize_articles(
         for a in articles
     )
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = anthropic.Anthropic(api_key=api_key.strip())
 
     response = client.messages.create(
         model=model,
