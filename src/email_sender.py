@@ -5,12 +5,14 @@ def build_email_html(summary: str, articles: list[dict], date_str: str) -> str:
     """Build a formatted HTML email with summary and article links."""
     articles_html = ""
     for i, article in enumerate(articles, 1):
+        titulo = article.get("titulo_pt", article["title"])
+        resumo = article.get("resumo_pt", article.get("description", ""))
         articles_html += f"""
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #eee;">
-                <strong style="font-size: 15px;">{i}. {article['title']}</strong><br>
-                <span style="color: #666; font-size: 13px;">
-                    {article.get('description', '')[:150]}
+                <strong style="font-size: 15px;">{i}. {titulo}</strong><br>
+                <span style="color: #555; font-size: 13px; line-height: 1.5;">
+                    {resumo}
                 </span><br>
                 <span style="color: #999; font-size: 12px;">{article['source']}</span>
                 &nbsp;·&nbsp;
@@ -52,7 +54,7 @@ def send_digest_email(
     resend.api_key = api_key
 
     return resend.Emails.send({
-        "from": from_email,
+        "from": f"Joshua AI News <{from_email}>",
         "to": [to_email],
         "subject": subject,
         "html": html_body,

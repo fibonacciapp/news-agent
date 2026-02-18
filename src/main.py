@@ -39,7 +39,7 @@ def run():
     print(f"  Total unique: {len(all_articles)}, sending top {len(top_articles)}")
 
     print("Summarizing with Claude...")
-    summary = summarize_articles(
+    result = summarize_articles(
         articles=top_articles,
         api_key=config.ANTHROPIC_API_KEY,
         model=config.ANTHROPIC_MODEL,
@@ -49,8 +49,8 @@ def run():
     subject = f"Seu Resumo Tech/IA — {date_str}"
 
     html = build_email_html(
-        summary=summary,
-        articles=top_articles,
+        summary=result["resumo_do_dia"],
+        articles=result["articles"],
         date_str=date_str,
     )
 
