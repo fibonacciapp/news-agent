@@ -1,43 +1,38 @@
 import resend
 
 
-def build_email_html(summary: str, articles: list[dict], date_str: str) -> str:
-    """Build a formatted HTML email with summary and article links."""
+def build_email_html(articles: list[dict], date_str: str) -> str:
+    """Build a formatted HTML email with article links in titles."""
     articles_html = ""
     for i, article in enumerate(articles, 1):
         titulo = article.get("titulo_pt", article["title"])
         resumo = article.get("resumo_pt", article.get("description", ""))
         articles_html += f"""
         <tr>
-            <td style="padding: 12px 0; border-bottom: 1px solid #eee;">
-                <strong style="font-size: 15px;">{i}. {titulo}</strong><br>
-                <span style="color: #555; font-size: 13px; line-height: 1.5;">
+            <td style="padding: 14px 0; border-bottom: 1px solid #eee;">
+                <a href="{article['link']}" style="color: #0066cc; text-decoration: none; font-size: 16px; font-weight: bold;">
+                    {i}. {titulo}
+                </a><br>
+                <p style="color: #444; font-size: 13px; line-height: 1.6; margin: 6px 0 4px 0;">
                     {resumo}
-                </span><br>
-                <span style="color: #999; font-size: 12px;">{article['source']}</span>
-                &nbsp;·&nbsp;
-                <a href="{article['link']}" style="color: #0066cc; font-size: 12px;">Ler mais</a>
+                </p>
+                <span style="color: #999; font-size: 11px;">{article['source']}</span>
             </td>
         </tr>"""
 
     return f"""
     <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, sans-serif; color: #333;">
         <h1 style="font-size: 22px; border-bottom: 3px solid #0066cc; padding-bottom: 8px;">
-            Seu Resumo Tech/IA — {date_str}
+            Novidades de IA no mundo — {date_str}
         </h1>
 
-        <div style="background: #f0f7ff; padding: 16px; border-radius: 8px; margin: 16px 0;">
-            <h2 style="font-size: 16px; margin: 0 0 8px 0;">Resumo do Dia</h2>
-            <p style="margin: 0; line-height: 1.6; font-size: 14px;">{summary}</p>
-        </div>
-
-        <h2 style="font-size: 16px;">Notícias</h2>
+        <h2 style="font-size: 16px; margin-top: 20px;">Notícias de IA</h2>
         <table style="width: 100%; border-collapse: collapse;">
             {articles_html}
         </table>
 
         <p style="color: #999; font-size: 11px; margin-top: 24px; text-align: center;">
-            Gerado automaticamente pelo News Agent
+            Gerado automaticamente pelo Joshua AI News
         </p>
     </div>
     """
